@@ -1,129 +1,121 @@
-const { createStore } = require("redux");
-// state --> count : 0
-// action --> increment, decrement, reset
-// reducer
-// store
-
-const INCREMENT = "INCREMENT";                   
-const DECREMENT = "DECREMENT";
-const RESET = "RESET";
-const INCREMENT_BY_VALUE = "INCREMENT_BY_VALUE";
-const ADD_USER = "ADD_USER";
-// state
-const initialCounterState = {
-    users  : ["nayeem"],
-    count: 0,
-
+// product reducers
+const { createStore, combineReducers } = require("redux");
+// products constance
+const GET_PRODUCTS = "GET_PRODUCTS";
+const ADD_PRODUCTS = "ADD_PRODUCTS";
+// 1. init state
+const initialProducts = {
+    products: ["sugar", "salt"],
+    numberOfProduct: 2
 };
 
-// action
-const incrementCounterAction = () => {
+// 2.product counter
+const getProducts = () => {
     return {
-        type: INCREMENT
+        type: GET_PRODUCTS
     }
 };
 
-const decrementCounterAction = () => {
+const addProducts = (product) => {
     return {
-        type: DECREMENT
-    }
-};
-
-const resetCounterAction = () => {
-    return {
-        type: RESET
-    }
-};
-
-const incrementCounterByValue = (value) => {
-    return {
-        type: INCREMENT_BY_VALUE,
-        payload : value
+        type: ADD_PRODUCTS,
+        payload : product    
     }
 }
 
-// reducer
-const counterReducer = (state = initialCounterState, action) => {
+// creating reducer 
+const productReducer = (state= initialProducts, action) => {
     switch (action.type) {
-        case INCREMENT:
+        case GET_PRODUCTS:
             return {
-                ...state,
-                count: state.count + 1
+                ...state
             };
-        case DECREMENT:
+        case ADD_PRODUCTS:
             return {
-                ...state,
-                count: state.count - 1
+                products: [...state.products, action.payload],
+                numberOfProduct: state.numberOfProduct + 1
             };
-        case RESET:
-            return {
-                ...state,
-                count: 0
-            };
-        case INCREMENT_BY_VALUE: 
-            return {
-                ...state,
-                count : state.count  + action.payload
-            }
-          
-    
         default:
-            state;
-    }
-    
-};
-
-// store
-const store = createStore(counterReducer);
-
-store.subscribe(() => {
-    console.log(store.getState());
-})
-
-// store.dispatch(incrementCounterAction());
-// store.dispatch(incrementCounterAction());
-// store.dispatch(incrementCounterAction());
-// store.dispatch(incrementCounterAction());
-// store.dispatch(incrementCounterAction());
-// store.dispatch(decrementCounterAction())
-// store.dispatch(resetCounterAction());
-// store.dispatch(incrementCounterByValue(5))
-
-
-// ---------------------------------------------------
-
-// 1. state
-// const initialCounterState = {
-//     users  : ["nayeem"],
-//     count: 0,
-// };
-//2. creating action users
-const addUser = (user) => {
-    return {
-        type: ADD_USER, 
-        payload : user
+            return state
     }
 }
 
-//3. creating reducer user
-const usersReducer = (state = initialCounterState, action) => {
-    switch (action.type) {
-        case ADD_USER:
-            return {
-                count: state.count + 1,
-                users: [...state.users, action.payload]
-            }
-    
-        default:
-            state;
+// store creating
+// const store = createStore(productReducer);
+
+// store.subscribe(() => {
+//     console.log(store.getState());
+// });
+// store.dispatch(getProducts());
+// store.dispatch(addProducts("potato"))
+
+
+// ------------------------------------------------
+// cart reduces
+
+const GET_CART_ITEM = "GET_CART_ITEM";
+const ADD_CART_ITEM = "ADD_CART_ITEM"; 
+
+// initial cart
+const initialCarts = {
+    carts: ["umbrella", "pen"],
+    numberOfCarts : 2
+}
+
+// cart counter
+const getCarts = () => {
+    return {
+        type: GET_CART_ITEM
     }
 };
 
-// 4.store
-const userStore = createStore(usersReducer);
-userStore.subscribe(() => {
-    console.log(userStore.getState());
+const addCarts = (cart) => {
+    return {
+        type: ADD_CART_ITEM,
+        payload: cart
+    }
+};
+
+// creating reducer
+const cartReducer = (state = initialCarts, action) => {
+    switch (action.type){
+        case GET_CART_ITEM:
+            return {
+                ...state
+            };
+        case ADD_CART_ITEM:
+            return {
+                carts: [...state.carts, action.payload],
+                numberOfCarts: state.numberOfCarts + 1
+            };
+
+        default:
+         return state
+    }
+}
+
+// store
+// const cartStore = createStore(cartReducer);
+// cartStore.subscribe(() => {
+//     console.log(cartStore.getState());
+// });
+
+// cartStore.dispatch(getCarts());
+// cartStore.dispatch(addCarts("mobile"));
+
+// combineReducers -----------------------------------------
+const rootReducer = combineReducers({
+    productR: productReducer,
+    cartR : cartReducer
 })
 
-userStore.dispatch(addUser("abdul basir"));
-userStore.dispatch(addUser("Bakiya"));
+const combineStore = createStore(rootReducer);
+combineStore.subscribe(() => {
+    console.log(combineStore.getState());
+});
+
+combineStore.dispatch(getCarts())
+combineStore.dispatch(addCarts("orange"));
+
+combineStore.dispatch(getCarts());
+combineStore.dispatch(addProducts("laptop"));
