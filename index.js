@@ -2,6 +2,14 @@
 // api url -- jsonplaceholder
 // middleware
 // axios api
+
+
+// how to work redux in js
+// step : 1 ---->state
+// step : 2 ---->action
+// step : 3 ---->reducer
+// step : 4 ---->store
+
 const axios = require("axios");
 const { applyMiddleware,createStore } = require("redux");
 const { thunk } = require("redux-thunk");
