@@ -2,20 +2,25 @@
 // api url -- jsonplaceholder
 // middleware
 // axios api
-
+const axios = require("axios");
 const { applyMiddleware,createStore } = require("redux");
 const { thunk } = require("redux-thunk");
+
+
+
 
 // consts
 const GET_TODOS_REQUEST = "GET_TODOS_REQUEST";
 const GET_TODOS_SUCCESS = "GET_TODOS_SUCCESS";
 const GET_TODOS_FAILED = "GET_TODOS_FAILED";
+const API_URL = "https://jsonplaceholder.typicode.com/todo"
 // state
 const initialTodosState = {
     todos: [],
     isLoading: false,
     error: null
 };
+console.log(typeof thunk); // "function" হওয়া উচিত
 
 // actions
 const getTodosRequest = () => {
@@ -63,13 +68,27 @@ const todosReducer = (state = initialTodosState, action) => {
     }
 };
 
-// async actions creations
-const fetchData = async() => {
-    
-}
+//  actions creations
+const fetchData = () => {
+    return (dispatch) => {
+        dispatch(getTodosRequest());
+        axios.get(API_URL)
+            .then((res) => {
+                const todos = res.data;
+                const titles = todos.map(todo=>todo.title);
+                console.log(titles);
+                dispatch.getTodosSuccess(titles);
+            })
+            .catch(err => {
+                console.log(err.message);
+                dispatch.getTodosFailed(err.message);
+            });
+    }
+};
+
 
 // store
-const store = createStore(todosReducer, applyMiddleware(thunk))
+const store = createStore(todosReducer, applyMiddleware(thunk));
 
 store.subscribe(() => {
     console.log(store.getState());
